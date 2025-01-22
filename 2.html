@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday freakster!</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: url('images.jpg') no-repeat center center fixed;
+            background-size: cover;
+            backdrop-filter: blur(10px);
+            font-family: Arial, Helvetica, sans-serif;
+            color: beige;
+            overflow: hidden;
+            margin: 0;
+            position: relative;
+        }
+        .draggable {
+            cursor: grab;
+            transition: transform 0.1s ease-out;
+            position: absolute;
+        }
+        .draggable:active {
+            cursor: grabbing;
+        }
+        h1, h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+        #confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: black; z-index: 10;">Happy Birthday freakster</h1>
+    <div class="draggable" id="img1" style="top: 20%; left: 30%;"><img src="macaroon.jpg" width="150"></div>
+    <div class="draggable" id="img2" style="top: 45%; left: 30%;"><img src="macaroon2.jpg" width="150"></div>
+    <div class="draggable" id="img3" style="top: 70%; left: 30%;"><img src="macaroon3.jpg" width="150"></div>
+    <h2 style="color: black; z-index: 10;">(The images are draggable)</h2>
+    <audio id="boingSound" src="thoserwh.mp3"></audio>
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        const draggables = document.querySelectorAll('.draggable');
+        const boingSound = document.getElementById('boingSound');
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener('mousedown', startDrag);
+        });
+
+        function startDrag(e) {
+            e.preventDefault();
+            const elem = e.target.closest('.draggable');
+            const shiftX = e.clientX - elem.getBoundingClientRect().left;
+            const shiftY = e.clientY - elem.getBoundingClientRect().top;
+
+            function moveAt(pageX, pageY) {
+                elem.style.left = pageX - shiftX + 'px';
+                elem.style.top = pageY - shiftY + 'px';
+                checkBounds(elem);
+            }
+
+            function onMouseMove(event) {
+                moveAt(event.pageX, event.pageY);
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+
+            elem.onmouseup = function() {
+                document.removeEventListener('mousemove', onMouseMove);
+                elem.onmouseup = null;
+            };
+        }
+
+        document.addEventListener('dragstart', function() {
+            return false;
+        });
+
+        function checkBounds(elem) {
+            const rect = elem.getBoundingClientRect();
+            const margin = 10;
+
+            if (rect.left < margin || rect.top < margin || rect.right > window.innerWidth - margin || rect.bottom > window.innerHeight - margin) {
+                playBoingSound();
+            }
+        }
+
+        function playBoingSound() {
+            boingSound.currentTime = 0;
+            boingSound.play();
+        }
+
+        // Confetti effect
+        function confetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const confettis = [];
+            const confettiCount = 300;
+            const gravity = 0.5;
+
+            for (let i = 0; i < confettiCount; i++) {
+                confettis.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    width: Math.random() * 10 + 5,
+                    height: Math.random() * 10 + 5,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    velocityX: Math.random() * 2 - 1,
+                    velocityY: Math.random() * 3 + 2
+                });
+            }
+
+            function drawConfetti() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                confettis.forEach(confetti => {
+                    context.fillStyle = confetti.color;
+                    context.fillRect(confetti.x, confetti.y, confetti.width, confetti.height);
+                    confetti.x += confetti.velocityX;
+                    confetti.y += confetti.velocityY;
+                    confetti.velocityY += gravity;
+
+                    if (confetti.y > canvas.height) {
+                        confetti.y = canvas.height - confetti.height;
+                        confetti.velocityY *= -0.6;
+                    }
+                });
+
+                requestAnimationFrame(drawConfetti);
+            }
+
+            drawConfetti();
+        }
+
+        window.onload = confetti;
+    </script>
+</body>
+</html>

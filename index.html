@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown to January 23, 2025</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+            margin: 0;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://cdn.mos.cms.futurecdn.net/xaycNDmeyxpHDrPqU6LmaD-970-80.jpg.webp') no-repeat center center;
+            background-size: cover;
+            filter: blur(15px);
+            z-index: -1;
+        }
+        .countdown {
+            font-size: 5em;
+        }
+        .message {
+            font-size: 2em;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .access-button {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            color: white;
+            background-color: #007aff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+        .access-button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div id="content">
+        <div id="countdown" class="countdown"></div>
+        <div id="message" class="message"></div>
+        <div class="button-container">
+            <button id="accessButton" class="access-button" onclick="window.location.href='2.html'">Happy birthday cro</button>
+        </div>
+    </div>
+
+    <script>
+        const targetDate = new Date('January 23, 2025 00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = '';
+                document.getElementById('message').innerHTML = 'Happy birthday!!!!!!!!!!!';
+                document.getElementById('accessButton').style.display = 'inline-block';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            document.getElementById('message').innerHTML = 'Countdown to January 23, 2025';
+
+            setTimeout(updateCountdown, 1000);
+        }
+
+        updateCountdown();
+    </script>
+</body>
+</html>
